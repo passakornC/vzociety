@@ -1,0 +1,67 @@
+.sidebar-offcanvas-right{
+    position: fixed;
+    right: 5px;
+    height: 100%;
+    overflow-x: hidden;
+    margin-top: 60px;
+    width:28%;
+}
+.group_timeline_profile-img #group_timeline_profile_pic1
+{
+    width:200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: initial;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+.sidebar-offcanvas-left {
+    position: fixed;
+	height: 100%;
+    background-color: white;
+    overflow-x: hidden;
+    width:300px;
+}
+.group_timeline_information .group_timeline_name
+{
+    color: black;
+    font-size: 30px;
+    font-variant: small-caps;
+    text-align: center;
+    margin-bottom: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+::-webkit-scrollbar {
+    width: 0px;  /* Remove scrollbar space */
+    background: transparent;  /* Optional: just make scrollbar invisible */
+}
+.group_timeline .timeline_post{
+    border: none;
+    box-shadow: 5px 5px 5px rgba(0,0,0,.1);
+    margin-bottom: 20px;
+    padding:10px;
+    background: #DAD299;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #fdfcfb, #ebedee);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #fdfcfb, #ebedee); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+}
+.group_timeline .timeline_post .post_author
+{
+    font-size: 30px;
+    text-underline: black;
+}
+.group_timeline .timeline_post .timeline_time
+{
+    text-align: right;
+}
+.group_timeline .timeline_post a{
+    text-decoration: none;
+}
+.group_timeline .timeline_post .post_title{
+    font-size: 30px;
+}
+.group_timeline .timeline_post hr{
+    border-top: 1px dashed red;
+}

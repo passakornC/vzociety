@@ -1,0 +1,150 @@
+{% extends "signup/base.html" %}
+{% load static %}
+{% load friendshiptags %}
+{% block body_block %}
+    <div class="container" style="margin-top: 60px">
+        <div class="jumbotron">
+            <h1>Profile Card</h1>
+            <div class="container emp-profile">
+                <div class="row">
+                    <div class="col-md-3 col-eq">
+                        <div class="profile-img">
+                            <img src="{{ user_profile.profile_pic.url }}" id="profile_photo" style=" width: 200px;height: 200px;border-radius: 50%;margin-bottom: 10px;">
+                        </div>
+                        {% if friends %}
+                            <div class="profile-img">
+                                <strong style="color: blue">
+                                    Friends
+                                </strong>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4 col-eq" id="profile_div">
+                        <div class="profile-head">
+                            <h4><i class="glyphicon glyphicon-link"></i> <input type="text" value="{{ user.username }}"
+                                                                                readonly></h4>
+                            <h4><i class="glyphicon glyphicon-user"></i> <input type="text"
+                                                                                value="{{ user.first_name }} {{ user.last_name }}"
+                                                                                readonly></h4>
+                            {% if user_profile.privacy_email == "Friends" and friends %}
+                                <h4><i class="glyphicon glyphicon-envelope"></i> <input type="text" value="{{ user.email }}"
+                                                                                        readonly></h4>
+                            {% endif %}
+                            {% if user_profile.privacy_email == "Everyone" %}
+                                <h4><i class="glyphicon glyphicon-envelope"></i> <input type="text" value="{{ user.email }}"
+                                                                                        readonly></h4>
+                            {% endif %}
+                            {% if user_profile.privacy_dob == "Friends" and friends %}
+                                <h4><i class="glyphicon glyphicon-gift"></i> <input type="text" value="{{ user_profile.dob }}" readonly></h4>
+                            {% endif %}
+                            {% if user_profile.privacy_dob == "Everyone" %}
+                                <h4><i class="glyphicon glyphicon-gift"></i> <input type="text" value="{{ user_profile.dob }}" readonly></h4>
+                            {% endif %}
+                            {% if user_profile.country %}
+                                <h4><i class="glyphicon glyphicon-flag"></i> <input type="text" value="{{ user_profile.country }}" readonly></h4>
+                            {% endif %}
+                            {% if user_profile.mobile %}
+                                {% if user_profile.privacy_phone == "Friends" and friends %}
+                                    <h4><i class="glyphicon glyphicon-phone"></i> <input type="text" value="{{ user_profile.mobile }}" readonly></h4>
+                                {% endif %}
+                                {% if user_profile.privacy_phone == "Everyone" %}
+                                    <h4><i class="glyphicon glyphicon-phone"></i> <input type="text" value="{{ user_profile.mobile }}" readonly></h4>
+                                {% endif %}
+                            {% endif %}
+                            <h4><img src="{% static "media/svg/lavatory.png" %}"><input type="text" value=" {{ user_profile.gender }}" readonly></h4>
+                        </div>
+                    </div>
+                    <div class="col-md-5 col-eq">
+                        <div class="bio-head">
+                            <h4>About</h4><br>
+                            <textarea class="form-control" rows="8" id="comment" readonly>{{ user_profile.biography }}</textarea>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+            {% if not friends and not request_status%}
+                <div class="row">
+                    <div class="col-md-3" style="float: right">
+                        <div class="upload-btn-wrapper-submit">
+                            <form method="post" action="{% url 'friendship_add_friend' user.username%}">
+                                {% csrf_token %}
+                                <button class="btn edit" type="submit" id="addfriend">Add friend</button>
+                            </form>
+                            {#                            {% if not user == request.user.username %}#}
+                            {#                                {% if errors %}<p>{{ errors|join:", " }}</p>{% endif %}#}
+                            {#                                    <input type="hidden" name="to_username" value="{{ to_username }}" />#}
+                            {#                            {% endif %}#}
+                        </div>
+                    </div>
+                </div>
+            {% elif not friends and request_status %}
+                <div class="row">
+                    <div class="col-md-3" style="float: right">
+                        <div class="upload-btn-wrapper-submit">
+                            <form method="post" action="{% url 'friendship_cancel' friendship_id %}">
+                                {% csrf_token %}
+                                <button class="btn edit" type="submit" id="removefriend">Cancel Request</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% elif  friends%}
+                <div class="row">
+                    <div class="col-md-3" style="float: right">
+                        <div class="upload-btn-wrapper-submit">
+                            <form method="post" action="{% url 'remove_friend' user.username%}">
+                                {% csrf_token %}
+                                <button class="btn edit" type="submit" id="removefriend">Remove friend</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3" style="float: left; margin-left: -25px">
+                        <div class="upload-btn-wrapper-submit">
+                            <form method="get" action="{% url 'friendship_view_friends' user.username %}">
+                            {% csrf_token %}
+                            <button class="btn edit">{{ user.first_name }}'s friendlist</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+    {% if friends %}
+            <div class="jumbotron">
+                <form action="/create_post/{{ user.username }}/" class="form-horizontal" role="form" method="post">
+                    {% csrf_token %}
+                    <h3><strong>Post on {{ user.first_name }} {{ user.last_name }}'s Timeline</strong></h3>
+                    <input type="text" class="form-control input-lg" placeholder="Enter Title" id="id_title" name="title" required style="width: 100%">
+                    <br><br>
+                    <div class="form-group" style="margin-left: 0%;width: 100%">
+                        <textarea class="form-control input-lg" placeholder="Update your status" name="text" id="id_text"></textarea>
+                    </div><br>
+                    <button class="btn btn-primary" type="submit">Create Post</button>
+                </form>
+            </div>
+    {% endif %}
+    <div class="profile_timeline">
+    {% for post in post_lists %}
+        {% if friends %}
+                <div class="profile_post">
+                    <div class="post_author"><a href="/profile/{{ post.author}}/">{{ post.author}}</a></div>
+                    <hr>
+                    <div class="post_title">{{ post.title }}</div>
+                    <p style="text-align: justify"> {{ post.text }}</p>
+                    <div class="timeline_time"><i class="glyphicon glyphicon-time"></i> {{ post.created_date }}</div>
+                </div>
+            {% elif not friends and user_profile.privacy_posts == "Everyone" %}
+                <div class="profile_post">
+                    <div class="post_author"><a href="/profile/{{ post.author}}/">{{ post.author}}</a></div>
+                    <hr>
+                    <div class="post_title">{{ post.title }}</div>
+                    <p style="text-align: justify"> {{ post.text }}</p>
+                    <div class="timeline_time"><i class="glyphicon glyphicon-time"></i> {{ post.created_date }}</div>
+                </div>
+        {% endif %}
+    {% endfor %}
+    </div>
+{% endblock %}

@@ -1,0 +1,253 @@
+{% extends "signup/base.html" %}
+{% load static %}
+{% load friendshiptags %}
+{% block body_block %}
+    <style>
+        input[type=date]::-webkit-inner-spin-button{
+            -webkit-appearance: none;
+            display: none;
+        }
+    </style>
+    <div class="container" style="margin-top: 60px">
+        <div class="jumbotron">
+            <h1>Profile Card</h1>
+            <div class="container emp-profile">
+                <div class="row">
+                    <div class="col-md-3 col-eq">
+                        <div class="profile-img">
+                            <img src="{{ user_profile.profile_pic.url }}" id="profile_photo">
+                            <div class="upload-btn-wrapper">
+                                <a href="#" data-toggle="modal" data-target="#update-avatar-modal">
+                                    <button class="btn edit">Update Profile Pic</button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-eq" id="profile_div">
+                        <div class="profile-head">
+                            <h4><i class="glyphicon glyphicon-link"></i> <input type="text" value="{{ user.username }}"
+                                                                                readonly></h4>
+                            <h4><i class="glyphicon glyphicon-user"></i> <input type="text"
+                                                                                value="{{ user.first_name }} {{ user.last_name }}"
+                                                                                readonly></h4>
+                            <h4><i class="glyphicon glyphicon-envelope"></i> <input type="text" value="{{ user.email }}"
+                                                                                    readonly></h4>
+                            <h4><i class="glyphicon glyphicon-gift"></i> <input type="text"
+                                                                                value="{{ user_profile.dob }}" readonly>
+                            </h4>
+                            {% if user_profile.country %}
+                                <h4><i class="glyphicon glyphicon-flag"></i> <input type="text"
+                                                                                    value="{{ user_profile.country }}"
+                                                                                    readonly></h4>
+                            {% endif %}
+                            {% if user_profile.mobile %}
+                                <h4><i class="glyphicon glyphicon-phone"></i> <input type="text"
+                                                                                     value="{{ user_profile.mobile }}"
+                                                                                     readonly></h4>
+                            {% endif %}
+                            <h4><img src="{% static "media/svg/lavatory.png" %}"><input type="text"
+                                                                                        value=" {{ user_profile.gender }}"
+                                                                                        readonly></h4>
+                        </div>
+                    </div>
+                    <div class="col-md-5 col-eq">
+                        <div class="bio-head">
+                            <h4>About</h4><br>
+                            <textarea class="form-control" rows="8" id="comment"
+                                      readonly>{{ user_profile.biography }}</textarea>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div style="float: left; margin-left: 15px">
+                    <div class="upload-btn-wrapper-submit">
+                        <form method="get" action="{% url 'friendship_view_friends' user.username %}">
+                            {% csrf_token %}
+                            <button class="btn edit">My Friends</button>
+                        </form>
+                    </div>
+                </div>
+                <div style="float: left; margin-left: 15px">
+                    <div class="upload-btn-wrapper-submit">
+                        <form method="get" action="/view_invitations/">
+                            {% csrf_token %}
+                            <button class="btn edit">Check Group Requests</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-3" style="float: right">
+                    <div class="upload-btn-wrapper-submit">
+                        <a href="#" data-toggle="modal" data-target="#update-bio-modal">
+                            <button class="btn edit">Edit Bio & Details</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container profile_timeline">
+        {% for post in post_lists %}
+            <div class="profile_post">
+                <div class="post_author"><a href="/profile/{{ post.author }}/">{{ post.author }}</a></div>
+                <hr>
+                <div class="post_title">{{ post.title }}</div>
+                <p style="text-align: justify"> {{ post.text }}</p>
+                <div class="timeline_time"><i class="glyphicon glyphicon-time"></i> {{ post.created_date }}</div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Update Biography Modal -->
+    <div class="modal fade" id="update-bio-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">Update Your Profile</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{% url 'update_bio' %}" enctype="multipart/form-data" method="post">
+                    {% csrf_token %}
+                    <div class="modal-body">
+
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <label>About</label>
+                                <input id="id_biography" type="text" class="form-control input-lg" name="biography"
+                                       value="{{ user_profile.biography }}"><br>
+                                <label>Country</label>
+                                <input id="id_country" type="text" class="form-control input-lg" name="country"
+                                       value="{{ user_profile.country }}"><br>
+                                <label>Mobile</label>
+                                <input id="id_mobile" type="text" class="form-control input-lg" name="mobile"
+                                       value="{{ user_profile.mobile }}"><br>
+                                <label>Date of Birth</label>
+                                <input id="id_dob" type="date" class="form-control input-lg" name="dob"
+                                       onkeydown="return false" value="{{ user_profile.dob }}" required><br></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Avatar Modal -->
+    <div class="modal fade" id="update-avatar-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">Update Profile Photo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{% url 'update_profile_pic' %}" enctype="multipart/form-data" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <input id="profile_pic" type="file" accept="image/*" class="btn btn-sm btn-secondary"
+                                       name="profile_pic">
+                                <img id="profile_pic_preview" class="img-preview" src="">
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {#    <!-- Update Friend Request -->#}
+    {#    <div class="modal fade" id="friend-requests" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">#}
+    {#        <div class="modal-dialog" role="document">#}
+    {#            <div class="modal-content">#}
+    {#                <div class="modal-header">#}
+    {#                    <h5 class="modal-title" id="myModalLabel">Friend Requests</h5>#}
+    {#                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span#}
+    {#                            aria-hidden="true">&times;</span>#}
+    {#                    </button>#}
+    {#                </div>#}
+    {#                <div class="modal-body">#}
+    {#                    <div class="row">#}
+    {#                        <div class="shadow">#}
+    {#                            <div class="col-sm-12">#}
+    {#                                <div class="col-sm-2">#}
+    {#                                    <img src="https://www.infrascan.net/demo/assets/img/avatar5.png" class="img-circle" width="60px">#}
+    {#                                </div>#}
+    {#                                <div class="col-sm-7">#}
+    {#                                    <h4><a href="#">Rahul Jain</a></h4>#}
+    {#                                    <p><a href="#">4 mutual friends</a></p>#}
+    {#                                </div>#}
+    {#                                <div class="col-sm-3">#}
+    {#                                    <button href="#">Accept</button><br /><br />#}
+    {#                                    <button href="#">Cancel</button>#}
+    {#                                </div>#}
+    {#                            </div>#}
+    {#                            <div class="clearfix"></div>#}
+    {#                            <hr />#}
+    {#                            <div class="col-sm-12">#}
+    {#                                <div class="col-sm-2">#}
+    {#                                    <img src="https://www.infrascan.net/demo/assets/img/avatar5.png" class="img-circle" width="60px">#}
+    {#                                </div>#}
+    {#                                <div class="col-sm-7">#}
+    {#                                    <h4><a href="#">Rahul Jain</a></h4>#}
+    {#                                    <p><a href="#">4 mutual friends</a></p>#}
+    {#                                </div>#}
+    {#                                <div class="col-sm-3">#}
+    {#                                    <button href="#">Accept</button><br /><br />#}
+    {#                                    <button href="#">Cancel</button>#}
+    {#                                </div>#}
+    {#                            </div>#}
+    {#                            <div class="clearfix"></div>#}
+    {#                            <hr />#}
+    {#                            <div class="col-sm-12">#}
+    {#                                <div class="col-sm-2">#}
+    {#                                    <img src="https://www.infrascan.net/demo/assets/img/avatar5.png" class="img-circle" width="60px">#}
+    {#                                </div>#}
+    {#                                <div class="col-sm-7">#}
+    {#                                    <h4><a href="#">Rahul Jain</a></h4>#}
+    {#                                    <p><a href="#">4 mutual friends</a></p>#}
+    {#                                </div>#}
+    {#                                <div class="col-sm-3">#}
+    {#                                    <button href="#">Accept</button><br /><br />#}
+    {#                                    <button href="#">Cancel</button>#}
+    {#                                </div>#}
+    {#                            </div>#}
+    {#                            <div class="clearfix"></div>#}
+    {#                            <hr />#}
+    {#                            <div class="col-sm-12">#}
+    {#                                <div class="col-sm-2">#}
+    {#                                    <img src="https://www.infrascan.net/demo/assets/img/avatar5.png" class="img-circle" width="60px">#}
+    {#                                </div>#}
+    {#                                <div class="col-sm-7">#}
+    {#                                    <h4><a href="#">Rahul Jain</a></h4>#}
+    {#                                    <p><a href="#">4 mutual friends</a></p>#}
+    {#                                </div>#}
+    {#                                <div class="col-sm-3">#}
+    {#                                    <button href="#">Accept</button><br /><br />#}
+    {#                                    <button href="#">Cancel</button>#}
+    {#                                </div>#}
+    {#                            </div>#}
+    {#                            <div class="clearfix"></div>#}
+    {#                            <hr />#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {#                    <div class="modal-footer">#}
+    {#                        <button type="button" class="btn btn-default" data-dismiss="modal">Dismiss Window</button>#}
+    {#                    </div>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#        </div>#}
+{% endblock %}

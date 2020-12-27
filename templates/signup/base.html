@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>FriendsBook</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">
+    <!--BootStrap Links-->
+    {#    <link rel="stylesheet" href="{% static "CSS/base.css" %}">#}
+    <!--External CSS File-->
+{#    <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://apis.google.com">#}
+
+    <link rel="stylesheet" href="{% static "CSS/profiling.css" %}">
+    <link rel="stylesheet" href="{% static "CSS/timeline.css" %}">
+    <link rel="stylesheet" href="{% static "CSS/search.css" %}">
+    <link rel="stylesheet" href="{% static "CSS/privacy.css" %}">
+    <link rel="stylesheet" href="{% static "CSS/accountsetting.css" %}">
+    <link rel="stylesheet" href="{% static "CSS/jkeyboard.css" %}">
+    <link rel="stylesheet" href="{% static "CSS/group_profile.css" %}">
+    <link rel="stylesheet" href="{% static "CSS/group_timeline.css" %}">
+    <link rel="stylesheet" href="{% static "CSS/page_timeline.css" %}">
+</head>
+<body>
+<div class="container-fluid">
+<div class="row">
+<nav class="navbar navbar-inverse" style="width:100%;position: fixed;z-index: 2;top: 0;left: 0;">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{% url 'index' %}"><i font-size="30px"> FSB</i></a>
+            <ul class="nav navbar-nav">
+                </ul>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            {% if user.is_authenticated and not registered %}
+                <ul class="nav navbar-nav">
+                    <li><a href="/timeline/">Timeline</a></li>
+                </ul>
+                <div class="nav navbar-nav">
+                    <form class="navbar-form" action="{% url 'search' %}">
+                        <div style="overflow: auto">
+                            <input type="text" class="form-control" placeholder="Search" name="search">
+                            <button type="submit" class="btn btn-default"> Submit</button>
+                        </div>
+                    </form>
+                </div>
+                <ul class="nav navbar-nav navbar-right ">
+                <li><a href="/messages/"> Messages</a></li>
+                    <li><a href="/friendship/friend/requests/"> Check Friend Requests</a></li>
+                    <li><a href="/profile/"> Profile</a></li>
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="/setting/">Settings</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/settings/account/">Account Settings</a></li>
+                            <li><a href="/settings/security/">Security Settings</a></li>
+                            <li><a href="/settings/privacy/">Privacy Settings</a></li>
+
+                        <li><a href="{% url 'wallet' %}">My Wallet</a> </li>
+                        </ul>
+                    </li>
+
+                    <li><a href="/logout/">Logout</a></li>
+                </ul>
+            {% else %}
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/signup/"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+                    <li><a href="/login/"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+</div>
+<div class="row">
+    {% block body_block %}
+    {% endblock %}
+</div>
+</div>
+<script src="{% static "bootstrap/js/jquery.min.js" %}"></script>
+<script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+<script src="{% static "js/signup.js" %}"></script>
+<script src="{% static "js/group.js" %}"></script>
+<script src="{% static "js/svg/svg.js" %}"></script>
+<script src="{% static "js/account.js" %}"></script>
+<script src="{% static "js/register.js" %}"></script>
+<script src="{% static "js/jkeyboard.js" %}"></script>
+<script src="{% static "js/mykeyboard.js" %}"></script>
+<script src="{% static "js/page.js" %}"></script>
+<script src="{% static "js/wallet.js" %}"></script>
+<script src="{% static "js/login.js" %}"></script>
+<script src="{% static "js/wallet.js" %}"></script>
+<script src="{% static "js/password_reset.js" %}"></script>
+<script src="{% static "js/compose.js" %}"></script>
+</body>
+</html>
